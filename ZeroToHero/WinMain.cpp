@@ -7,40 +7,24 @@ int CALLBACK WinMain(
 	int nCmdShow
 )
 {
-	try
-	{
 
-		Window win(800, 300, TEXT("NICE ASSY WIN"));
-		Window win2(1024, 720, TEXT("NICE ASSY WIN 2"));
+	Window win(800, 300, TEXT("NICE ASSY WIN"));
 
-		// get message
-		MSG msg;
-		BOOL gRes;
-		while ((gRes = GetMessage(&msg, nullptr, 0, 0)) > 0)
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		if (gRes == -1)
-		{
-			return -1;
-		}
-		// PostQuitMessage( 69//wParam );
-		return msg.wParam;
-	}
-	catch (const MyException& e)
+	// get message
+	MSG msg;
+	BOOL gRes;
+	while ((gRes = GetMessage(&msg, nullptr, 0, 0)) > 0)
 	{
-		MessageBox( nullptr, reinterpret_cast<LPCWSTR>(e.what()), reinterpret_cast<LPCWSTR>(e.GetType()), MB_OK | MB_ICONEXCLAMATION);
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
 	}
-	catch (const std::exception& e )
+	
+	if (gRes == -1)
 	{
-		MessageBox( nullptr, reinterpret_cast<LPCWSTR>(e.what()), TEXT("Standart Exception"), MB_OK | MB_ICONEXCLAMATION);
+		return -1;
 	}
-	catch (...)
-	{
-		MessageBox(nullptr, TEXT("No details available"), TEXT("Unknown Exception"), MB_OK | MB_ICONEXCLAMATION);
-	}
+	// PostQuitMessage( 69//wParam );
+	return msg.wParam;
 
 	return -1;
 }

@@ -1,5 +1,6 @@
 #include "Window.h"
 #include <sstream>
+#include "resource.h"
 
 Window::WindowClass Window::WindowClass::wndClass;
 
@@ -13,12 +14,12 @@ Window::WindowClass::WindowClass() noexcept
 	wc.cbClsExtra = 0; //extra bytes
 	wc.cbWndExtra = 0;  // extra bytes
 	wc.hInstance = hInstance;
-	wc.hIcon = nullptr;
+	wc.hIcon = static_cast<HICON>(LoadImage( hInstance, MAKEINTRESOURCE( IDI_ICON1 ), IMAGE_ICON, 32,32,0 ));
 	wc.hCursor = nullptr;
 	wc.hbrBackground = nullptr;
 	wc.lpszMenuName = nullptr; // will not be used because its a game project
 	wc.lpszClassName = GetName();
-	wc.hIconSm = nullptr;
+	wc.hIconSm = static_cast<HICON>(LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 16, 16, 0));
 	RegisterClassEx(&wc);
 }
 
@@ -81,7 +82,8 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-Window::Window(int width, int height, const wchar_t* name) noexcept
+// to test our exception we need to delete noexcept
+Window::Window(int width, int height, const wchar_t* name) noexcept 
 {
 	// we entered client width and height
 	RECT wr;
@@ -108,55 +110,4 @@ Window::Window(int width, int height, const wchar_t* name) noexcept
 Window::~Window()
 {
 	DestroyWindow(hWnd);
-}
-
-Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept
-	:
-	MyException(line, file),
-	hr(hr)
-{}
-
-const char* Window::Exception::what() const noexcept
-{
-	 std::ostringstream oss;
-	 oss << GetType() << std::endl
-		 << "[ERROR CODE] " << GetErrorCode() << std::endl
-		 << "[Description]" << GetErrorString() << std::endl
-		 << GetOriginString();
-
-	 whatBuffer = oss.str().c_str();
-	 return whatBuffer;
-}
-
-const char* Window::Exception::GetType() const noexcept
-{
-	return "Window Exception";
-}
-
-const char* Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
-{
-	const char* pMsgBuf = nullptr;
-	DWORD nMsgLen = FormatMessage( 
-		FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		nullptr, hr, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
-		reinterpret_cast<LPWSTR>(&pMsgBuf),0 ,nullptr
-	);
-	if (nMsgLen == 0)
-	{
-		return "Unidentified error code";
-	}
-	const char* errorString = pMsgBuf;
-	LocalFree( &pMsgBuf );
-	return errorString;
-}
-
-HRESULT Window::Exception::GetErrorCode() const noexcept
-{
-	return this->hr;
-}
-
-const char* Window::Exception::GetErrorString() const noexcept
-{
-	return TranslateErrorCode( hr );
 }

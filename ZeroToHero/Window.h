@@ -1,4 +1,5 @@
 #pragma once
+
 //target win 7 or later
 #define _WIN32_WININT 0x0601
 #include<sdkddkver.h>
@@ -10,10 +11,35 @@
 #define NOATOM
 #define NOCOLOR
 #define NOKANJI
-#define NOSOUND
+#define NOIMAGE
+#define NOMINMAX
+#define NORPC
+#define NOMCX
+#define NOTAPE
+#define NODEFERWINDOWPOS
+#define NOSOUND 
+#define NOWH
+#define NOCOMM
+#define NOTEXTMETRIC
+#define NOHELP
+#define NOPROFILER
+#define NODRAWTEXT
+#define NOKERNEL
+#define NOCLIPBOARD
+#define NOMETAFILE
+#define NOCTLMGR
+#define NOSERVICE
+#define NONLS
+#define NORASTEROPS
+#define OEMRESOURCE
+#define NOSYSMETRICS
+
+#define STRICT
+
 
 #include<Windows.h>
-#include"MyException.h"
+
+
 
 
 class Window
@@ -58,31 +84,11 @@ private: // private class
 	
 public:
 
-	Window(int width, int height, const wchar_t* name) noexcept;
+	Window(int width, int height, const wchar_t* name) noexcept; 
 	~Window();
 	Window(const Window&) = delete; //removes copy constructer
 	Window& operator=(const Window&) = delete;
 
-public:
-
-	class Exception : public MyException
-	{
-		
-	private:
-		
-		HRESULT hr;
-
-	public:
-
-		Exception(int line, const char* file, HRESULT hr) noexcept;
-		const char* what() const noexcept override;
-		const char* GetType() const noexcept override;
-		static const char* TranslateErrorCode(HRESULT hr) noexcept;
-		HRESULT GetErrorCode() const noexcept;
-		const char* GetErrorString() const noexcept;
-
-
-	};
 };
 // helper macro from chilli
-#define WND_EXCEPT( hr ) Window::Exception( __LINE__, __FILE__, hr)
+#define COWND_EXCEPT( hr ) Window::Exception( __LINE__, __FILE__, hr)
